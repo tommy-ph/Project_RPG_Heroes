@@ -2,14 +2,13 @@
 
 namespace Project_RPG_Heroes
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-            var mage = new Mage("New Mage");
+            Mage mage = new Mage("New Mage");
+            mage.Display();
 
-            Console.WriteLine(mage.Name);
-            Console.WriteLine(mage.Level);
 
         }
     }

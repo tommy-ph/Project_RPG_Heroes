@@ -15,11 +15,11 @@ namespace Project_RPG_Heroes.Items
 
         public Armor(string nameItem, int requiredLevelItem, Slots slotItem, ArmorTypes armorType, HeroAttribute armorAttribute) : base(nameItem, requiredLevelItem, slotItem)
         {
-            NameItem= nameItem;
-            RequiredLevelItem= requiredLevelItem;
-            SlotItem= slotItem;
-            ArmorType= armorType;
-            ArmorAttribute= armorAttribute;
+            NameItem = nameItem;
+            RequiredLevelItem = requiredLevelItem;
+            SlotItem = slotItem;
+            ArmorType = armorType;
+            ArmorAttribute = armorAttribute;
         }
 
 
