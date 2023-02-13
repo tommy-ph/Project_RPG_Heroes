@@ -18,6 +18,15 @@ namespace Project_RPG_Heroes.Attributes
             Dexterity = dexterity;
             Intelligence = intelligence;
         }
+
+        public HeroAttribute()
+        {
+        }
+
+        public static HeroAttribute operator +(HeroAttribute a, HeroAttribute b)
+        {
+            return new HeroAttribute(a.Strength + b.Strength, a.Dexterity + b.Dexterity, a.Intelligence + b.Intelligence);
+        }
         public HeroAttribute Add(HeroAttribute OtherHeroes)
         {
             return new HeroAttribute(
