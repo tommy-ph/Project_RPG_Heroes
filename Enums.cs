@@ -11,7 +11,8 @@ namespace Project_RPG_Heroes
         Weapon,
         Head,
         Body,
-        Legs
+        Legs,
+        Armor
     }
 
     public enum WeaponTypes

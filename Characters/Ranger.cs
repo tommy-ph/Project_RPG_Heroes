@@ -12,15 +12,22 @@ namespace Project_RPG_Heroes.Characters
     {
         public Ranger(string name) : base(name)
         {
-            ValidWeaponTypes.Add(WeaponTypes.Bows);
-            ValidArmorTypes.Add(ArmorTypes.Leather);
-            ValidArmorTypes.Add(ArmorTypes.Mail);
+            ValidWeaponTypes = new List<WeaponTypes>() { WeaponTypes.Bows };
+            ValidArmorTypes = new List<ArmorTypes>() { ArmorTypes.Leather, ArmorTypes.Mail };
+            LevelAttributes.Strength = 1;
+            LevelAttributes.Dexterity = 7;
+            LevelAttributes.Intelligence = 1;
+            DamagingAttribute = LevelAttributes.Dexterity;
+
+
         }
 
         public override void Levelup()
         {
+            
             Level++;
-            LevelAttributes.Intelligence += 5;
+            HeroAttribute attributeIncrease = new HeroAttribute(1, 5, 1);
+            LevelAttributes = LevelAttributes.IncreaseBy(attributeIncrease);
         }
 
         public override void Equip(Item item)
@@ -38,35 +45,17 @@ namespace Project_RPG_Heroes.Characters
                     return;
                 }
             }
-            Equipment[item.SlotItem] = item;
+            Equipment[item.Slot] = item;
         }
 
-        public override int Damage()
+        public override int CalculateDamage()
         {
-            int damagge = LevelAttributes.Intelligence * 2;
-            if (Equipment[Slots.Weapon] != null)
+            int damagge = LevelAttributes.Dexterity * 5;
+            if (Equipment[Slots.Weapon] != null && Equipment[Slots.Weapon] is Weapon)
             {
-                damagge += (Equipment[Slots.Weapon] as Weapon).WeaponDamage;
+                damagge += (Equipment[Slots.Weapon] as Weapon).Damage;
             }
             return damagge;
-        }
-
-        public override HeroAttribute TotalAttributes()
-        {
-            HeroAttribute totalAttributes = LevelAttributes;
-            foreach (var item in Equipment.Values)
-            {
-                if (item != null && item is Armor)
-                {
-                    totalAttributes += (item as Armor).ArmorAttribute;
-                }
-            }
-            return totalAttributes;
-        }
-
-        public override void Display()
-        {
-            throw new NotImplementedException();
         }
     }
 }

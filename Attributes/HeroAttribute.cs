@@ -27,6 +27,7 @@ namespace Project_RPG_Heroes.Attributes
         {
             return new HeroAttribute(a.Strength + b.Strength, a.Dexterity + b.Dexterity, a.Intelligence + b.Intelligence);
         }
+
         public HeroAttribute Add(HeroAttribute OtherHeroes)
         {
             return new HeroAttribute(
@@ -35,12 +36,17 @@ namespace Project_RPG_Heroes.Attributes
                 Intelligence + OtherHeroes.Intelligence
                 );
         }
+       
 
-        public void IncreaseLevel(int strenght,int deterity,int intelligence)
+        // Method to increase a HeroAttribute instance by a specified amount
+        public HeroAttribute IncreaseBy(HeroAttribute other)
         {
-            Strength+= strenght;
-            Dexterity+= deterity;
-            Intelligence+= intelligence;    
+            return new HeroAttribute(
+                 Strength += other.Strength,
+                 Dexterity += other.Dexterity,
+                 Intelligence += other.Intelligence
+                );
+           
         }
     }
 }

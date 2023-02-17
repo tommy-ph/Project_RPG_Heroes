@@ -1,4 +1,5 @@
 ﻿using Project_RPG_Heroes.Attributes;
+using Project_RPG_Heroes.Exceptions;
 using Project_RPG_Heroes.Items;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,16 @@ namespace Project_RPG_Heroes.Characters
     {
         public string Name { get; set; }
         public int Level { get; set; }
+        public double DamagingAttribute { get; protected set; }
+        public List<Hero> Characters { get; set; }
         public HeroAttribute LevelAttributes { get; set; }
         public Dictionary<Slots,Item> Equipment { get; set; } 
         public List<WeaponTypes> ValidWeaponTypes { get; set; } 
         public List<ArmorTypes> ValidArmorTypes { get; set; }
-        //public HeroAttribute heroAttributes;
+        public Weapon EquippedWeapon { get; set; }
+        public IEnumerable<object> Strength { get; set; }
+        public IEnumerable<object> Dexterity { get; set; }
+        public IEnumerable<object> Intelligence { get; set; }
 
         public Hero(string name)
         {
@@ -32,34 +38,138 @@ namespace Project_RPG_Heroes.Characters
             };
             ValidWeaponTypes = new List<WeaponTypes>();
             ValidArmorTypes = new List<ArmorTypes>();
-           // heroAttributes = new HeroAttribute();
+          
         }
 
         public abstract void Levelup();
 
-        public  virtual void Equip(Item item)
+        public virtual void Equip(Item item)
         {
-            if(item is Weapon && ValidWeaponTypes.Contains((item as Weapon).WeaponType))
+            if (Level < item.RequiredLevel)
             {
-                Equipment[Slots.Weapon] = item;
+                throw new ArgumentException($"Cannot equip {item.Name}, required level is {item.RequiredLevel}");
             }
-            else if(item is Armor && ValidArmorTypes.Contains((item as Armor).ArmorType))
+
+            if (item is Weapon weapon)
             {
-                Equipment[item.SlotItem] = item; 
+                EquipWeapon(weapon);
+            }
+            else if (item is Armor armor)
+            {
+                EquipArmor(armor);
+            }
+            else
+            {
+                throw new ArgumentException($"Cannot equip {item.Name}, unknown item type");
             }
         }
 
-        public virtual int Damage()
+        private void EquipWeapon(Weapon weapon)
         {
-            int damage = 0;
-            if (Equipment[Slots.Weapon] != null)
+            switch (this)
             {
-                Weapon weapon = (Weapon)Equipment[Slots.Weapon];
-                damage += weapon.WeaponDamage;
+                case Mage mage:
+                    if (mage.ValidWeaponTypes.Contains(weapon.WeaponType))
+                    {
+                        Equipment[Slots.Weapon] = weapon;
+                    }
+                    else
+                    {
+                        throw new InvalidWeaponException($"Mage cannot equip {weapon.Name}");
+                    }
+                    break;
+                case Ranger ranger:
+                    if (ranger.ValidWeaponTypes.Contains(weapon.WeaponType))
+                    {
+                        Equipment[Slots.Weapon] = weapon;
+                    }
+                    else
+                    {
+                        throw new InvalidWeaponException($"Ranger cannot equip {weapon.Name}");
+                    }
+                    break;
+                case Rogue rogue:
+                    if (rogue.ValidWeaponTypes.Contains(weapon.WeaponType))
+                    {
+                        Equipment[Slots.Weapon] = weapon;
+                    }
+                    else
+                    {
+                        throw new InvalidWeaponException($"Rogue cannot equip {weapon.Name}");
+                    }
+                    break;
+                case Warrior warrior:
+                    if (warrior.ValidWeaponTypes.Contains(weapon.WeaponType))
+                    {
+                        Equipment[Slots.Weapon] = weapon;
+                    }
+                    else
+                    {
+                        throw new InvalidWeaponException($"Warrior cannot equip {weapon.Name}");
+                    }
+                    break;
+                default:
+                    throw new ArgumentException($"Cannot equip {weapon.Name}, unknown hero type");
             }
-            return damage;
         }
-        public virtual HeroAttribute TotalAttributes()
+
+        private void EquipArmor(Armor armor)
+        {
+            switch (this)
+            {
+                case Mage mage:
+                    if (mage.ValidArmorTypes.Contains(armor.ArmorType))
+                    {
+                        Equipment[Slots.Armor] = armor;
+                    }
+                    else
+                    {
+                        throw new InvalidArmorException($"Mage cannot equip {armor.Name}");
+                    }
+                    break;
+                case Ranger ranger:
+                    if (ranger.ValidArmorTypes.Contains(armor.ArmorType))
+                    {
+                        Equipment[Slots.Armor] = armor;
+                    }
+                    else
+                    {
+                        throw new InvalidArmorException($"Ranger cannot equip {armor.Name}");
+                    }
+                    break;
+                case Rogue rogue:
+                    if (rogue.ValidArmorTypes.Contains(armor.ArmorType))
+                    {
+                        Equipment[Slots.Armor] = armor;
+                    }
+                    else
+                    {
+                        throw new InvalidArmorException($"Rogue cannot equip {armor.Name}");
+                    }
+                    break;
+                case Warrior warrior:
+                    if (warrior.ValidArmorTypes.Contains(armor.ArmorType))
+                    {
+                        Equipment[Slots.Armor] = armor;
+                    }
+                    else
+                    {
+                        throw new InvalidArmorException($"Warrior cannot equip {armor.Name}");
+                    }
+                    break;
+                default:
+                    throw new ArgumentException($"Cannot equip {armor.Name}, unknown hero type");
+            }
+        }
+
+        public virtual int CalculateDamage()
+        {
+            HeroAttribute totalAttributes = GetTotalAttributes();   
+
+            return (int)(EquippedWeapon.Damage * (1 + ((double)DamagingAttribute / 100)));
+        }
+
+        public virtual HeroAttribute GetTotalAttributes()
         {
             HeroAttribute totalAttributes = LevelAttributes;
 
@@ -80,20 +190,21 @@ namespace Project_RPG_Heroes.Characters
 
             return totalAttributes;
         }
-        public virtual void Display()
-        {
-            Console.WriteLine($"Name: {Name}");
-            Console.WriteLine($"Level: {Level}");
-            Console.WriteLine($"Level attributes: ");
-            Console.WriteLine($"Strength: {LevelAttributes.Strength}");
-            Console.WriteLine($"Dexterity: {LevelAttributes.Dexterity}");
-            Console.WriteLine($"Intelligence: {LevelAttributes.Intelligence}");
-            Console.WriteLine($"Equipment:");
 
-            foreach(var item in Equipment)
-            {
-                Console.WriteLine($"{item.Key}: {item.Value?.NameItem ?? "None"}");
-            }
+        public string Display()
+        {
+            HeroAttribute totalAttributes = GetTotalAttributes();
+            int damage = CalculateDamage();
+
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"Name: {Name}");
+            stringBuilder.AppendLine($"Level: {Level}");
+            stringBuilder.AppendLine($"Total Strength: {totalAttributes.Strength}");
+            stringBuilder.AppendLine($"Total Dexterity: {totalAttributes.Dexterity}");
+            stringBuilder.AppendLine($"Total Intelligence: {totalAttributes.Intelligence}");
+            stringBuilder.AppendLine($"Damage: {damage}");
+
+            return stringBuilder.ToString();
         }
     }
 }

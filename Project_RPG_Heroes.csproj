@@ -7,4 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="PRG_HeroesTest\**" />
+    <EmbeddedResource Remove="PRG_HeroesTest\**" />
+    <None Remove="PRG_HeroesTest\**" />
+  </ItemGroup>
+
 </Project>
