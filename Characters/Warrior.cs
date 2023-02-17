@@ -12,16 +12,19 @@ namespace Project_RPG_Heroes.Characters
     {
         public Warrior(string name) : base(name)
         {
-            ValidWeaponTypes.Add(WeaponTypes.Axes);
-            ValidWeaponTypes.Add(WeaponTypes.Hammers);
-            ValidWeaponTypes.Add(WeaponTypes.Swords);
-            ValidArmorTypes.Add(ArmorTypes.Mail);
-            ValidArmorTypes.Add(ArmorTypes.Plate);
+            ValidWeaponTypes = new List<WeaponTypes>() { WeaponTypes.Axes, WeaponTypes.Hammers, WeaponTypes.Swords };
+            ValidArmorTypes = new List<ArmorTypes>() { ArmorTypes.Mail, ArmorTypes.Plate };
+            LevelAttributes.Strength = 5;
+            LevelAttributes.Dexterity = 2;
+            LevelAttributes.Intelligence = 1;
+            DamagingAttribute = LevelAttributes.Strength;
         }
         public override void Levelup()
         {
+
             Level++;
-            LevelAttributes.Intelligence += 5;
+            HeroAttribute attributeIncrease = new HeroAttribute(3, 2, 1);
+            LevelAttributes = LevelAttributes.IncreaseBy(attributeIncrease);
         }
 
         public override void Equip(Item item)
@@ -39,35 +42,17 @@ namespace Project_RPG_Heroes.Characters
                     return;
                 }
             }
-            Equipment[item.SlotItem] = item;
+            Equipment[item.Slot] = item;
         }
 
-        public override int Damage()
+        public override int CalculateDamage()
         {
-            int damagge = LevelAttributes.Intelligence * 2;
-            if (Equipment[Slots.Weapon] != null)
+            int damagge = LevelAttributes.Strength * 3 + LevelAttributes.Dexterity;
+            if (Equipment[Slots.Weapon] != null && Equipment[Slots.Weapon] is Weapon)
             {
-                damagge += (Equipment[Slots.Weapon] as Weapon).WeaponDamage;
+                damagge += (Equipment[Slots.Weapon] as Weapon).Damage;
             }
             return damagge;
-        }
-
-        public override HeroAttribute TotalAttributes()
-        {
-            HeroAttribute totalAttributes = LevelAttributes;
-            foreach (var item in Equipment.Values)
-            {
-                if (item != null && item is Armor)
-                {
-                    totalAttributes += (item as Armor).ArmorAttribute;
-                }
-            }
-            return totalAttributes;
-        }
-
-        public override void Display()
-        {
-            throw new NotImplementedException();
         }
     }
 }

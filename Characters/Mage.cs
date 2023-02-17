@@ -12,16 +12,20 @@ namespace Project_RPG_Heroes.Characters
     {
         public Mage(string name) : base(name)
         {
-            ValidWeaponTypes.Add(WeaponTypes.Staffs);
-            ValidWeaponTypes.Add(WeaponTypes.Wands);
-            ValidArmorTypes.Add(ArmorTypes.Cloth);
-            LevelAttributes.Intelligence = 10;
+            ValidWeaponTypes = new List<WeaponTypes>() { WeaponTypes.Staffs, WeaponTypes.Staffs };
+            ValidArmorTypes = new List<ArmorTypes>() { ArmorTypes.Cloth };
+            LevelAttributes.Strength = 1;
+            LevelAttributes.Dexterity = 1;
+            LevelAttributes.Intelligence = 8;
+            DamagingAttribute = LevelAttributes.Intelligence;
         }
 
         public override void Levelup()
         {
-            Level++;
-            LevelAttributes.Intelligence += 5;
+           
+            Level ++;
+            HeroAttribute attributeIncrease = new HeroAttribute(1, 1, 5);
+            LevelAttributes = LevelAttributes.IncreaseBy(attributeIncrease);
         }
 
         public override void Equip(Item item)
@@ -33,51 +37,28 @@ namespace Project_RPG_Heroes.Characters
                     Console.WriteLine("This weapon is invalid for Mage");
                     return;
                 }
-                else if(!ValidArmorTypes.Contains((item as Armor).ArmorType))
+                else if(item is Armor)
                 {
-                    Console.WriteLine("This armor is invalid for Mage");
-                    return;
+                    if (!ValidArmorTypes.Contains((item as Armor).ArmorType))
+                    {
+                        Console.WriteLine("This armor is invalid for Mage");
+                        return;
+                    }
                 }
             }
-            Equipment[item.SlotItem] = item;
+            Equipment[item.Slot] = item;
         }
 
-        public override int Damage()
+        public override int CalculateDamage()
         {
+
             int damagge = LevelAttributes.Intelligence * 2;
-            if (Equipment[Slots.Weapon] != null)
+            if (Equipment[Slots.Weapon] != null && Equipment[Slots.Weapon] is Weapon)
             {
-                damagge += (Equipment[Slots.Weapon] as Weapon).WeaponDamage;
+                damagge += (Equipment[Slots.Weapon] as Weapon).Damage;
             }
             return damagge;
-        }
 
-        public override HeroAttribute TotalAttributes()
-        {
-            HeroAttribute totalAttributes = LevelAttributes;
-            foreach(var item in Equipment.Values)
-            {
-                if(item != null && item is Armor)
-                {
-                    totalAttributes += (item as Armor).ArmorAttribute;
-                }
-            }
-            return totalAttributes;
-        }
-
-        public override void Display()
-        {
-            Console.WriteLine("Name: " + Name);
-            Console.WriteLine("Level: " + Level);
-            Console.WriteLine("Intelligence: " + LevelAttributes.Intelligence);
-            Console.WriteLine("Equipment:");
-            foreach (var item in Equipment)
-            {
-                if (item.Value != null)
-                {
-                    Console.WriteLine("- " + item.Value.NameItem + " (" + item.Key + ")");
-                }
-            }
         }
 
     }

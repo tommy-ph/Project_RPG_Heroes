@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Project_RPG_Heroes.Characters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,15 +9,18 @@ namespace Project_RPG_Heroes.Items
 {
     public abstract class Item
     {
-        public string NameItem { get; set; }
-        public int RequiredLevelItem { get; set; }
-        public Slots SlotItem { get; set; }
+        public string Name { get; set; }
+        public int RequiredLevel { get; set; }
+        public Slots Slot { get; set; }
 
-        public Item(string nameItem, int requiredLevelItem, Slots slotItem)
+        public Item(string nameItem, int requiredLevelItem, Slots slot)
         {
-            NameItem = nameItem;
-            RequiredLevelItem = requiredLevelItem;
-            SlotItem = slotItem;
+            Name = nameItem;
+            RequiredLevel = requiredLevelItem;
+            Slot= slot;
         }
+
+        public abstract void Equip(Hero hero);
+       
     }
 }
