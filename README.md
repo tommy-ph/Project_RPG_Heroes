@@ -1,10 +1,10 @@
 # Project_RPG_Heroes
 
-##RPG Heroes Console Application
+## RPG Heroes Console Application
 This is a console application built in .NET 6 using Visual Studio. It allows you to create and interact with different RPG heroes, level them up, equip them with items, 
 and calculate their attributes and damage.
 
-##Classes
+## Classes
 The application has the following classes:
 
 Hero: An abstract base class that encapsulates all shared functionality (fields and methods) for heroes.
@@ -14,7 +14,7 @@ Item: An abstract base class that represents an item that can be equipped by a h
 Weapon and Armor: Child classes that inherit from Item and represent different types of items that can be equipped.
 InvalidWeaponException and InvalidArmorException: Custom exceptions that are thrown when a hero tries to equip an item they cannot use.
 
-##Functionality
+## Functionality
 Here are some of the functionalities of the application:
 
 Create a new hero by providing a name.
